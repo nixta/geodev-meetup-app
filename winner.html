@@ -431,7 +431,13 @@
                 var name = _names[i];
                 if (name == "" || name == text || typeof(name) == undefined) {
                 } else {
-                    nameupdated = nameupdated + "\n" + name;
+                    // On initial loop - do not insert a blank row
+                    if( nameupdated == ""){
+                        nameupdated = name;
+                    }
+                    else {
+                        nameupdated = nameupdated + "\n" + name;
+                    }
                 }
             }
             $('#namesbox').val("");

@@ -285,7 +285,7 @@
             {
                 if( req.status === 200 && req.responseText !== "")
                 {
-                    var names = "";
+                    var myNames = "";
 
                     try {
                         var obj = JSON.parse(this.responseText);
@@ -295,10 +295,10 @@
                         }
                         else {
                             for(var a = 0; a < obj.features.length; a++){
-                                names += obj.features[a].attributes.first_name + " " + obj.features[a].attributes.last_name + "\n";
+                                myNames += obj.features[a].attributes.first_name + " " + obj.features[a].attributes.last_name + "\n";
                             }
 
-                            $("#namesbox").text(names);
+                            $("#namesbox").text(myNames);
                         }
                     }
                     catch(err) {

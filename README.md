@@ -9,6 +9,8 @@ This app provides three components:
 ## Event Management Page
 Use this page to create a new Feature that represents a meetup event.
 
+**This page doesn't exist yet :)**
+
 This will collect the following information:
 * Location (use can use Search to find the address, or move the meetup on the map).
 * Name

@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<!--[if IE 8]>
+<html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en"> <!--<![endif]-->
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width"/>
+	<link rel="icon" href="http://www.esri.com/favicon.ico">
+    <title>Random Name Picker</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.20/esri/css/esri.css">
+    <link rel="stylesheet" href="css/normalize.css"/>
+    <link rel="stylesheet" href="css/foundation.css"/>
+    <script src="js/vendor/custom.modernizr.js"></script>
+    <script src="js/jquery-latest.min.js"></script>
+
+    <script src="https://js.arcgis.com/3.20/"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+    <style>
+        #values {
+            position: relative;
+            font-size: 400%;
+            text-align: center;
+            margin: 0 auto;
+            z-index: 0;
+        }
+
+        .name {
+            overflow: hidden;
+            display: block;
+        }
+
+        #names {
+            display: none;
+            padding: 5px;
+        }
+
+        #namesbox {
+            min-height: 400px;
+            font-size: 32px;
+            color: #333;
+            resize: none;
+            border: 1px solid #F39C12;
+        }
+
+        .extra {
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        #result1 {
+            background: #000;
+            color: #fbe34b;
+            padding: 20px;
+            z-index: 10;
+            margin-top: -150px;
+        }
+
+        body {
+            background: #e5e5e5;
+        }
+
+        #varnote {
+            font-size: 40px;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .copyright {
+            font-size: 11px;
+            font-family: Tahoma;
+            color: #9B59B6;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="full-head" style="width:100%;background:#e5e5e5 center top">
+    <div class="row">
+        <div class="large-12 columns" style="padding-top:50px;background:#e5e5e5 repeat-x center top;z-index:20;">
+            <ul class="button-group even-4">
+                <li>
+                    <button class="button" id="list" onclick="namelist();">Get Name List</button>
+                </li>
+                <li>
+                    <button class="button" id="save" onclick="save();">Save &amp; Update</button>
+                </li>
+                <li>
+                    <button class="success button" id="go" onclick="go();">Go</button>
+                </li>
+                <li>
+                    <button class="alert button" id="sign-out-2" onclick="signOut();" >Sign-out</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="large-12 columns">
+        <h3 style="text-align:center;margin-top:30px;" id="headline">Let's see who is coming to DevSummit 2018?</h3>
+
+        <div id="varnote"><img src="img/logo.jpg" height="364" width="292"></div>
+
+        <div id="popdown">
+            <div id="names" class="inbox"><textarea name="namesbox" id="namesbox"></textarea></div>
+        </div>
+
+        <div id="values"></div>
+
+
+    </div>
+</div>
+
+
+<!-- Modal Panel -->
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Configuration Info</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Meetup Location:</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="meetup-location">
+                        <span class="input-group-btn">
+                            <button id="save-location-btn" class="btn btn-success" type="button">Save</button>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Application ID:</label>
+                    <div class="input-group">
+                        <input type="text" readonly class="form-control" id="app-id">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="sign-in" class="btn btn-success" type="button">Log In</button>
+                <button id="sign-out" type="submit" class="btn btn-danger">Sign-out</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+    <script>
+
+        // Globals - yeah I know ;-)
+
+        var LOCATION = "meetupLocation";   // meetup location
+        var _APP_ID = "pgOw7HSXNSdsWZSp";   // AGOL app id
+        var _token = null;
+        var _oauth_info;
+        var _feature_service = "https://services.arcgis.com/uCXeTVveQzP4IIcx/ArcGIS/rest/services/Geodevmeetuphl/FeatureServer/0";
+
+        // Let's initialize everything
+        (function init(){
+            $('#myModal').modal({ show: false});
+
+            // Set appId value in modal form
+            $('#myModal #app-id').val(_APP_ID);
+
+            // Sign into AGOL
+            document.getElementById("sign-in").addEventListener("click", function(e){
+                require(["esri/IdentityManager"], function(esriId){
+                    esriId.getCredential(_oauth_info.portalUrl + "/sharing")
+                        .then(function(result){
+                                console.log("hah");
+                            }
+                        );
+                });
+
+            });
+
+            // Sign out of AGOL
+            document.getElementById("sign-out").addEventListener("click", function(e){
+                signOut();
+            });
+
+            document.getElementById("save-location-btn").addEventListener("click", function(e){
+                var location = $("#meetup-location").val().trim();
+
+                if(location == ""){
+                    alert("Location is blank. Please enter a new location and the old location will be overwritten. ");
+                }
+                else {
+                    localStorage[LOCATION] = location;
+                    alert("The new value: " + location + " has been saved.");
+                }
+            });
+
+            if(localStorage[LOCATION]){
+                $('#myModal #meetup-location').val(localStorage[LOCATION]);
+            }
+
+            logIntoPortal(function(result){
+                if(!result){
+                    $('#myModal').modal( 'show' );
+                }
+            });
+        })();
+
+        // [Comment by AG: not really sure what this does?]
+        document.write('<script src=' +
+            ('__proto__' in {} ? 'js/vendor/zepto' : 'js/vendor/jquery') +
+            '.js><\/script>');
+
+        function signOut(){
+            require(["esri/IdentityManager"], function(esriId){
+                console.log("Signing out");
+                esriId.destroyCredentials();
+
+                // Delete the old meetup location
+                localStorage[LOCATION] = "";
+
+                window.location.reload();
+            });
+        }
+
+        function logIntoPortal(callback){
+            require(["esri/arcgis/OAuthInfo", "esri/IdentityManager", "dojo/on"], function(OAuthInfo, esriId, on){
+
+                if(_APP_ID === undefined){
+                    console.error("Set the APP ID in the configuration window. ");
+                }
+                else {
+                    _oauth_info = new OAuthInfo({
+                        appId: _APP_ID,
+                        // Uncomment the next line and update if using your own portal
+                        //portalUrl: "https://<host>:<port>/arcgis"
+                        // Uncomment the next line to prevent the user's signed in state from being shared
+                        // with other apps on the same domain with the same authNamespace value.
+                        //authNamespace: "portal_oauth_inline",
+                        popup: false
+                    });
+                }
+
+                esriId.registerOAuthInfos([_oauth_info]);
+
+                esriId.checkSignInStatus(_oauth_info.portalUrl + "/sharing").then(
+                    function (result){
+                        console.log("We are already logged in. Good to go!");
+                        _token = result.token;
+                        document.getElementById("sign-out").disabled = false;
+                        document.getElementById("sign-in").disabled = true;
+                        callback(true);
+                    }
+                ).otherwise(
+                    function (){
+                        document.getElementById("sign-out").disabled = true;
+                        document.getElementById("sign-in").disabled = false;
+                        console.warn("Log in required to get things going.");
+                        callback(false);
+                    }
+                );
+
+            });
+        }
+
+        function getNames(){
+
+            var whereClause = "location_name='" + localStorage[LOCATION] + "'";
+
+            var params = "f=json&token=" + _token + "&where=" + whereClause + "&outFields=first_name,last_name" + "&returnGeometry=false";
+            var req = new XMLHttpRequest();
+            req.open("POST", _feature_service + "/query", true);
+            req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            req.onload = function()
+            {
+                if( req.status === 200 && req.responseText !== "")
+                {
+                    var names = "";
+
+                    try {
+                        var obj = JSON.parse(this.responseText);
+
+                        if(obj.hasOwnProperty("error")){
+                            alert("Unable to make request: " + JSON.stringify(obj.error));
+                        }
+                        else {
+                            for(var a = 0; a < obj.features.length; a++){
+                                names += obj.features[a].attributes.first_name + " " + obj.features[a].attributes.last_name + "\n";
+                            }
+
+                            $("#namesbox").text(names);
+                        }
+                    }
+                    catch(err) {
+                        console.error("Failed to parse xhr request: ", err);
+                        alert("Unable to submit entry: " + err);
+                    }
+                }
+
+            };
+            req.onerror = function(e)
+            {
+                console.error("xhr failed: " + e);
+            };
+            req.ontimeout = function() {
+                console.error("xhr timeout error");
+            };
+            req.timeout = 30000;
+            req.send(params);
+        }
+
+    </script>
+
+    <script src="js/foundation.min.js"></script>
+    <script>$(document).foundation();</script>
+
+    <script>
+        var text;
+
+        function randOrd() {
+            return (Math.round(Math.random()) - 0.5);
+        }
+
+        function save() {
+            $("#varnote").hide();
+            $("#popdown").show();
+            $("#values").hide();
+            $("div").remove("#result1");
+            savenames = $("#namesbox").val();
+            savenames = savenames.replace(/\n\r?/g, '101');
+            $('#headline').fadeOut();
+            $('#headline').text('The name list is saved and updated.').fadeIn();
+            $("#names").show();
+            $('#namesbox').attr('disabled', 'disabled');
+        }
+
+        function namelist() {
+
+            getNames();
+
+            $("#varnote").hide();
+            $('#namesbox').removeAttr('disabled', 'disabled');
+            $('#headline').text('Configure name list');
+            $("#popdown").show();
+            $("#values").hide();
+            $("#names").show();
+            $('body').css({"overflow-y": "visible"});
+        }
+
+        // does the actual animation
+        function go() {
+            $("#varnote").hide();
+            $('body').css({"overflow-y": "hidden"});
+            $('#go').attr('disabled', 'disabled');
+            $('#list').attr('disabled', 'disabled');
+            $('#save').attr('disabled', 'disabled');
+            $('#headline').slideUp();
+            $('#namesbox').slideDown();
+
+            var count = 1;
+            count = 1;
+            $("div").remove("#result1");
+            names = $("#namesbox").val();
+            if (document.all) { // IE
+                names = names.split("\n");
+            }
+            else { //Mozilla
+                names = names.split("\n");
+            }
+            $("#values").show();
+            $(".name").show();
+            $("#popdown").hide();
+            $("div").remove(".name");
+            $("div").remove(".extra");
+            $("#playback").html("");
+            newtop = names.length * 200 * -1;
+            $('#values').css({top: +newtop});
+            names.sort(randOrd);
+            for (var i in names) {
+                if (names[i] == "" || typeof(names[i]) == undefined) {
+                    count = count - 1;
+                } else {
+                    name = names[i];
+                    //console.log(name);
+                    $('#values').append('<div id=result' + count + ' class=name>' + name + '</div>');
+                }
+                count = count + 1;
+            }
+
+            text = $('#result1').text()
+            $('#values').animate({top: '+176'}, 5000);
+
+            // make it stand out
+            setTimeout("standout(text)", 5000);
+            //setTimeout("$('#playback').hide('slow')",11005);
+        }
+
+        function standout(text) {
+
+            $('#result1').removeClass('name');
+            $('.name').animate({opacity: .25});
+            $('#result1').animate({height: '+=60px'});
+            $('#result1').append('<div class="extra"><a class="small alert button" href="#" onClick="removeName();">Remove name from list</a></div>');
+            $('#go').removeAttr('disabled', 'disabled');
+            $('#list').removeAttr('disabled', 'disabled');
+            $('#save').removeAttr('disabled', 'disabled');
+            $('#headline').text('DevSummit 2018 Winner!');
+            $('#headline').slideDown();
+        }
+
+        function removeName() {
+            // Rewriting namesbox contents
+            var nameupdated = "";
+            for (var i in names) {
+                name = names[i];
+                if (name == "" || name == text || typeof(name) == undefined) {
+                } else {
+                    nameupdated = nameupdated + "\n" + name;
+                }
+            }
+            $('#namesbox').val("");
+            $('#namesbox').val(nameupdated);
+            $('#result1').html("Removed");
+            $('#result1').fadeOut(1000, function () {
+                $("div").remove("#result1");
+            });
+            $("div").remove(".name");
+            $("div").remove(".extra");
+            $('#headline').text('You missed out! Let\'s see who is next?');
+        }
+
+    </script>
+
+</body>
+</html>

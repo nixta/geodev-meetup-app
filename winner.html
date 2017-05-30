@@ -370,12 +370,16 @@
             var count = 1;
             count = 1;
             $("div").remove("#result1");
-            names = $("#namesbox").val();
+
+            /////////////////////////////
+            // Global!!
+            _names = $("#namesbox").val();
+
             if (document.all) { // IE
-                names = names.split("\n");
+                _names = _names.split("\n");
             }
             else { //Mozilla
-                names = names.split("\n");
+                _names = _names.split("\n");
             }
             $("#values").show();
             $(".name").show();
@@ -383,14 +387,15 @@
             $("div").remove(".name");
             $("div").remove(".extra");
             $("#playback").html("");
-            newtop = names.length * 200 * -1;
+            newtop = _names.length * 200 * -1;
             $('#values').css({top: +newtop});
-            names.sort(randOrd);
-            for (var i in names) {
-                if (names[i] == "" || typeof(names[i]) == undefined) {
+
+            _names.sort(randOrd);
+            for (var i in _names) {
+                if (_names[i] == "" || typeof(_names[i]) == undefined) {
                     count = count - 1;
                 } else {
-                    name = names[i];
+                    var name = _names[i];
                     //console.log(name);
                     $('#values').append('<div id=result' + count + ' class=name>' + name + '</div>');
                 }
@@ -421,8 +426,8 @@
         function removeName() {
             // Rewriting namesbox contents
             var nameupdated = "";
-            for (var i in names) {
-                name = names[i];
+            for (var i in _names) {
+                var name = _names[i];
                 if (name == "" || name == text || typeof(name) == undefined) {
                 } else {
                     nameupdated = nameupdated + "\n" + name;

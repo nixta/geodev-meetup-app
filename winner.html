@@ -167,6 +167,7 @@
         var _APP_ID = "pgOw7HSXNSdsWZSp";   // AGOL app id
         var _token = null;
         var _oauth_info;
+        var _names = "";
         var _feature_service = "https://services.arcgis.com/uCXeTVveQzP4IIcx/ArcGIS/rest/services/Geodevmeetuphl/FeatureServer/0";
 
         // Let's initialize everything
@@ -285,7 +286,7 @@
             {
                 if( req.status === 200 && req.responseText !== "")
                 {
-                    var names = "";
+                    var myNames = "";
 
                     try {
                         var obj = JSON.parse(this.responseText);
@@ -295,10 +296,10 @@
                         }
                         else {
                             for(var a = 0; a < obj.features.length; a++){
-                                names += obj.features[a].attributes.first_name + " " + obj.features[a].attributes.last_name + "\n";
+                                myNames += obj.features[a].attributes.first_name + " " + obj.features[a].attributes.last_name + "\n";
                             }
 
-                            $("#namesbox").text(names);
+                            $("#namesbox").text(myNames);
                         }
                     }
                     catch(err) {
@@ -350,7 +351,7 @@
 
             $("#varnote").hide();
             $('#namesbox').removeAttr('disabled', 'disabled');
-            $('#headline').text('Configure name list');
+            $('#headline').text('Configure name list for ' + localStorage[LOCATION]);
             $("#popdown").show();
             $("#values").hide();
             $("#names").show();
@@ -370,12 +371,16 @@
             var count = 1;
             count = 1;
             $("div").remove("#result1");
-            names = $("#namesbox").val();
+
+            /////////////////////////////
+            // Global!!
+            _names = $("#namesbox").val();
+
             if (document.all) { // IE
-                names = names.split("\n");
+                _names = _names.split("\n");
             }
             else { //Mozilla
-                names = names.split("\n");
+                _names = _names.split("\n");
             }
             $("#values").show();
             $(".name").show();
@@ -383,14 +388,15 @@
             $("div").remove(".name");
             $("div").remove(".extra");
             $("#playback").html("");
-            newtop = names.length * 200 * -1;
+            newtop = _names.length * 200 * -1;
             $('#values').css({top: +newtop});
-            names.sort(randOrd);
-            for (var i in names) {
-                if (names[i] == "" || typeof(names[i]) == undefined) {
+
+            _names.sort(randOrd);
+            for (var i in _names) {
+                if (_names[i] == "" || typeof(_names[i]) == undefined) {
                     count = count - 1;
                 } else {
-                    name = names[i];
+                    var name = _names[i];
                     //console.log(name);
                     $('#values').append('<div id=result' + count + ' class=name>' + name + '</div>');
                 }
@@ -421,11 +427,17 @@
         function removeName() {
             // Rewriting namesbox contents
             var nameupdated = "";
-            for (var i in names) {
-                name = names[i];
+            for (var i in _names) {
+                var name = _names[i];
                 if (name == "" || name == text || typeof(name) == undefined) {
                 } else {
-                    nameupdated = nameupdated + "\n" + name;
+                    // On initial loop - do not insert a blank row
+                    if( nameupdated == ""){
+                        nameupdated = name;
+                    }
+                    else {
+                        nameupdated = nameupdated + "\n" + name;
+                    }
                 }
             }
             $('#namesbox').val("");

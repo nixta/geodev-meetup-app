@@ -217,11 +217,6 @@
             });
         })();
 
-        // [Comment by AG: not really sure what this does?]
-        document.write('<script src=' +
-            ('__proto__' in {} ? 'js/vendor/zepto' : 'js/vendor/jquery') +
-            '.js><\/script>');
-
         function signOut(){
             require(["esri/IdentityManager"], function(esriId){
                 console.log("Signing out");

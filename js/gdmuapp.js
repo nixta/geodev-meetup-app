@@ -55,7 +55,9 @@ function reflectStoredEvent() {
     $("#events-list").val(eventGuid);
     $("#events-list").trigger("chosen:updated");
 
-    $("#event-title").text(`the ${eventName}`);
+    if (eventName !== undefined) {
+        $("#event-title").text(`the ${eventName}`);
+    }
 }
 
 document.getElementById("login-btn").addEventListener("click", function (e) {

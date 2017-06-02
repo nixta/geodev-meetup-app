@@ -23,7 +23,7 @@ $('#successModal').modal({
     show: false
 });
 
-document.getElementById("config").addEventListener("dblclick", function showConfig() {
+document.getElementById("config").addEventListener("click", function showConfig() {
     reflectStoredEvent();
 
     $('#myModal #app-id').val(_APP_ID);

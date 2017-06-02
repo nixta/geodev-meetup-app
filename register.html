@@ -1,28 +1,33 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-	<link rel="icon" href="http://www.esri.com/favicon.ico">
+    <link rel="icon" href="http://www.esri.com/favicon.ico">
     <title>GeoDev Meetup</title>
     <style>
         #config {
             position: relative;
             text-align: center;
-			padding: 15px 0;
+            padding: 15px 0;
         }
-      
     </style>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
     <link rel="stylesheet" href="https://js.arcgis.com/3.20/esri/css/esri.css">
-      <!-- alert style-->
-  <link rel="stylesheet" type="text/css" href="alertstyle.css">
+    <!-- alert style-->
+    <link rel="stylesheet" type="text/css" href="alertstyle.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.7.0/chosen.min.css">
 
     <script src="https://js.arcgis.com/3.20/"></script>
+    <script src=""></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
 
 </head>
 
@@ -30,8 +35,8 @@
 
     <div class="jumbotron">
         <div class="container">
-            <h1>Welcome to our GeoDev Meetup!</h1>
-            <p>Please fill in the following form and submit.</p>
+            <h1>Welcome to <span id="event-title">our</span> GeoDev Meetup!</h1>
+            <p>Please fill in this form<span id="signin-benefit"> and as a bonus we'll enter you into today's raffle 🎁</span></p>
         </div>
     </div>
     <div class="panel-body">
@@ -81,16 +86,9 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Meetup Location:</label>
-                        <input type="text" class="form-control" id="meetup-location">
-                    </div>
-                    <div class="form-group">
-                        <label>Meetup Latitude:</label>
-                        <input type="text" class="form-control" id="meetup-latitude">
-                    </div>
-                    <div class="form-group">
-                        <label>Meetup Longitude:</label>
-                        <input type="text" class="form-control" id="meetup-longitude">
+                        <label>Event:</label>
+                        <select id="events-list" data-placeholder="Choose an event..." style="width:350px;" class="chosen-select">
+                        </select>
                     </div>
                     <hr>
                     <div class="form-group">
@@ -104,7 +102,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button id="save-config" type="submit" class="btn btn-primary">Save</button>
+                    <button id="save-config" type="submit" class="btn btn-primary" data-dismiss="modal">Save</button>
                     <button id="sign-out" type="submit" class="btn btn-danger">Sign-out</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
@@ -112,257 +110,39 @@
 
         </div>
     </div>
-    
+
     <div class="modal fade" id="alertModal" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header modal-header-warning">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="glyphicon glyphicon-alert"> Alert</h4>
-                </div>			
-				<div class="modal-body">
-					<div class="form-group">
-						<!-- <input type="text" class="form-control" id="alert-message"> -->
-						<p id="alert-message"></p>
-					</div>
-				</div>	
-			</div>
-		</div>
-	</div>	
-	
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <!-- <input type="text" class="form-control" id="alert-message"> -->
+                        <p id="alert-message"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="successModal" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header alert-success">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Thanks, your entry was successfully submitted!</h4>
-                </div>				
-			</div>
-		</div>
-	</div>		
-	
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="config">Copyright Esri 2017</div>
 
-    <script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.7.0/chosen.jquery.min.js" type="text/javascript"></script>
 
-        var LOCATION = "meetupLocation";   // meetup location
-        var LAT = "meetupLat";             // meetup lat
-        var LON = "meetupLon";             // meetup lon
-        var _APP_ID = "pgOw7HSXNSdsWZSp";   // AGOL app id
-		var _message = "";					// Alert message
-        var _oauth_info;
-        var _token = null;
-        var _feature_service = "https://services.arcgis.com/uCXeTVveQzP4IIcx/ArcGIS/rest/services/Geodevmeetuphl/FeatureServer/0";
-
-        $('#myModal').modal({ show: false});
-		$('#alertModal').modal({ show: false});
-		$('#successModal').modal({ show: false});
-		
-        document.getElementById("config").addEventListener("click", function(e){
-
-            if(localStorage[LOCATION]){
-                $('#myModal #meetup-location').val(localStorage[LOCATION]);
-            }
-
-            if(localStorage[LAT]){
-                $('#myModal #meetup-latitude').val(localStorage[LAT]);
-            }
-
-            if(localStorage[LON]){
-                $('#myModal #meetup-longitude').val(localStorage[LON]);
-            }
-
-            $('#myModal #app-id').val(_APP_ID);
-
-            $('#myModal').modal( 'show' );
-        });
-
-        document.getElementById("save-config").addEventListener("click", function(e){
-
-            localStorage[LOCATION] = $('#myModal #meetup-location').val().trim();
-            localStorage[LAT] = $('#myModal #meetup-latitude').val().trim();
-            localStorage[LON] = $('#myModal #meetup-longitude').val().trim();
-
-            console.log("Set local storage with config info: " + localStorage[LOCATION] + ", " + localStorage[LAT] + ", " + localStorage[LON]);
-        });
-
-       document.getElementById("submit-form").addEventListener("click", function(e){
-            var reject = false;
-			var regValidate = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
-            var firstName = $("#first-name").val().trim();
-            var lastName = $("#last-name").val().trim();
-            var title = $("#title").val().trim();
-            var organization = $("#organization").val().trim();
-            var email = $("#email").val().trim();
-
-            if( firstName === ''){
-                reject = true;
-            }
-           if( lastName === ''){
-               reject = true;
-           }
-           if( title === ''){
-               reject = true;
-           }
-           if( organization === ''){
-               reject = true;
-           }
-           if( email === ''){
-               reject = true;
-               } else if (!regValidate.test(email)) {
-                    showAlert("Please enter a valid email address");
-                    return false;
-           }
-
-           if(reject){
-			   showAlert("Please fill out all fields.");
-           }
-           else {
-
-               var firstTimer;
-
-               if(document.getElementById("firsttimer-yes").checked) {
-                   firstTimer = "yes";
-               }
-               else if(document.getElementById("firsttimer-no").checked) {
-                   firstTimer = "no";
-               }
-
-               submitUpdate(firstName, lastName, title, organization, email, firstTimer);
-           }
-       });
-
-       logIntoPortal();
-
-       document.getElementById("login-btn").addEventListener("click", function(e){
-           require(["esri/IdentityManager"], function(esriId){
-               esriId.getCredential(_oauth_info.portalUrl + "/sharing")
-                   .then(function(result){
-                        console.log("hah");
-                    }
-               );
-           });
-
-       });
-
-        document.getElementById("sign-out").addEventListener("click", function(e){
-            require(["esri/IdentityManager"], function(esriId){
-                console.log("Signing out");
-                esriId.destroyCredentials();
-                window.location.reload();
-            });
-
-        });
-		
-		$('#alertModal').on('show.bs.modal', function(evt){
-			$('#alert-message').text(_message);
-		});		
-
-		function showAlert(message) {
-			_message = message;
-			$('#alertModal').modal( 'show' );
-		}
-		
-        function submitUpdate(firstName, lastName, title, organization, email, firstTimer){
-
-            var newEntry = {'geometry':{
-                'x': parseFloat(localStorage[LON]),
-                'y': parseFloat(localStorage[LAT]),
-                'spatialReference': {
-                    'wkid':4326
-                }},
-                'attributes': {
-                    'first_name': firstName,
-                    'last_name': lastName,
-                    'title': title,
-                    'organization': organization,
-                    'email': email,
-                    'location_name': localStorage[LOCATION],
-                    'first_timer': firstTimer,
-                    'latitude': localStorage[LAT],
-                    'longitude': localStorage[LON]
-            }};
-
-            var params = "f=json&token=" + _token + "&adds=[" + encodeURIComponent(JSON.stringify(newEntry)) + "]";
-            var req = new XMLHttpRequest();
-            req.open("POST", _feature_service + "/applyEdits", true);
-            req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            req.onload = function()
-            {
-                if( req.status === 200 && req.responseText !== "")
-                {
-                    try {
-                        // var b = this.responseText.replace(/"/g, "'"); // jshint ignore:line
-                        var obj = JSON.parse(this.responseText);
-
-                        if(obj.hasOwnProperty('addResults') && obj.addResults[0].success === true){
-                            $("#first-name").val('');
-                            $("#last-name").val('');
-                            $("#title").val('');
-                            $("#organization").val('');
-                            $("#email").val('');
-                            //alert("Thanks, your entry was successfully submitted!");
-							$('#successModal').modal( 'show' );
-                        }
-                        else {
-                            showAlert("There was a problem with submitting your entry. " + this.responseText);
-                        }
-
-                    }
-                    catch(err) {
-                        console.error("applyEdits failed: ", err);
-                        showAlert("Unable to submit entry: " + err);
-                    }
-                }
-
-            };
-            req.onerror = function(e)
-            {
-                console.error("_makeEditRequest failed: " + e);
-            };
-            req.ontimeout = function() {
-                console.warn("xhr timeout error");
-            };
-            req.timeout = 30000;
-            req.send(params);
-        }
-
-       function logIntoPortal(){
-           require(["esri/arcgis/OAuthInfo", "esri/IdentityManager", "dojo/on"], function(OAuthInfo, esriId, on){
-
-               if(_APP_ID === undefined){
-                   console.error("Set the APP ID in the configuration window. ");
-               }
-               else {
-                   _oauth_info = new OAuthInfo({
-                       appId: _APP_ID,
-                       // Uncomment the next line and update if using your own portal
-                       //portalUrl: "https://<host>:<port>/arcgis"
-                       // Uncomment the next line to prevent the user's signed in state from being shared
-                       // with other apps on the same domain with the same authNamespace value.
-                       //authNamespace: "portal_oauth_inline",
-                       popup: false
-                   });
-               }
-
-               esriId.registerOAuthInfos([_oauth_info]);
-
-               esriId.checkSignInStatus(_oauth_info.portalUrl + "/sharing").then(
-                   function (result){
-                       console.log("We are already logged in. Good to go!");
-                       _token = result.token;
-                       document.getElementById("sign-out").disabled = false;
-                   }
-               ).otherwise(
-                   function (){
-                       document.getElementById("sign-out").disabled = true;
-                       console.warn("Log in required to get things going.");
-                   }
-               );
-
-           });
-       }
-
-    </script>
+    <script src="js/gdmuapp.js" type="text/javascript"></script>
 
 </body>

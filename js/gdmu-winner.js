@@ -267,7 +267,7 @@ function standout(text) {
     $('#result1').removeClass('name');
     $('.name').animate({opacity: .25});
     $('#result1').animate({height: '+=60px'});
-    $('#result1').append('<div class="extra"><a class="small alert button" href="#" onClick="removeName();">Remove name from list</a></div>');
+    $('#result1').append("<div class='extra'><button type='button' class='btn btn-danger' onclick='removeName()'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span>  Remove name from list</button></div>");
     $('#go').removeAttr('disabled', 'disabled');
     $('#list').removeAttr('disabled', 'disabled');
     $('#save').removeAttr('disabled', 'disabled');

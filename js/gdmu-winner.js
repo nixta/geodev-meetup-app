@@ -1,4 +1,4 @@
-var LOCATION = "meetupLocation";   // meetup location
+var LOCATION = "eventKey";   // meetup location
 var _APP_ID = "pgOw7HSXNSdsWZSp";   // AGOL app id
 var _token = null;
 var _oauth_info;
@@ -28,7 +28,8 @@ var _attendee_table = `${_attendeeBaseUrl}/1`;
     });
 
     document.getElementById("save-location-btn").addEventListener("click", function(e){
-        var location = $("#meetup-location").val().trim();
+        //var location = $("#meetup-location").val().trim();
+        var location = $("#events-list option:selected").data("event-key");
 
         if(location == ""){
             alert("Location is blank. Please enter a new location and the old location will be overwritten. ");
@@ -133,10 +134,10 @@ function getEventNames(){
                 )
             }
 
-            // Initialize chosen
-            $(".chosen-select").chosen({
-                width: "100%"
-            });
+            // // Initialize chosen
+            // $(".chosen-select").chosen({
+            //     width: "100%"
+            // });
         }, function (error) {
             console.error("Error getting events list: " + error);
         });
@@ -145,11 +146,11 @@ function getEventNames(){
 
 function getNames(){
 
-    var whereClause = "location_name='" + localStorage[LOCATION] + "'";
+    var whereClause = "EventKey='" + localStorage[LOCATION] + "'";
 
-    var params = "f=json&token=" + _token + "&where=" + whereClause + "&outFields=first_name,last_name" + "&returnGeometry=false";
+    var params = "f=json&token=" + _token + "&where=" + whereClause + "&outFields=FirstName,LastName" + "&returnGeometry=false";
     var req = new XMLHttpRequest();
-    req.open("POST", _feature_service + "/query", true);
+    req.open("POST", _attendee_table + "/query", true);
     req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     req.onload = function()
     {
@@ -165,7 +166,7 @@ function getNames(){
                 }
                 else {
                     for(var a = 0; a < obj.features.length; a++){
-                        myNames += obj.features[a].attributes.first_name + " " + obj.features[a].attributes.last_name + "\n";
+                        myNames += obj.features[a].attributes.FirstName + " " + obj.features[a].attributes.LastName + "\n";
                     }
 
                     $("#namesbox").text(myNames);

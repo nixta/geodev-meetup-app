@@ -104,6 +104,37 @@ function logIntoPortal(callback){
     });
 }
 
+function getNames2(){
+    require(["esri/tasks/QueryTask", "esri/tasks/query"], function (QueryTask, Query) {
+        var qt = new QueryTask(_feature_service);
+        var q = new Query();
+        q.where = "1=1";
+        q.outFields = ["Name", "Date", "EventKey", "GlobalID"];
+        q.orderByFields = ["Date DESC"];
+
+        qt.execute(q, function (results) {
+            for (var i = 0, len = results.features.length; i < len; i++) {
+                var event = results.features[i],
+                    eventGuid = event.attributes["GlobalID"],
+                    eventName = event.attributes["Name"],
+                    eventDate = new Date(event.attributes["Date"]),
+                    eventDateString = eventDate.toISOString().split("T")[0],
+                    eventId = `${eventName} ${eventDateString}`;
+                $("#events-list").append(
+                    `<option value="${eventGuid}" data-event-key="${eventId}" data-event-name="${eventName}">${eventId}</option>`
+                )
+            }
+
+            // Initialize chosen
+            $(".chosen-select").chosen({
+                width: "100%"
+            });
+        }, function (error) {
+            console.error("Error getting events list: " + error);
+        });
+    });
+}
+
 function getNames(){
 
     var whereClause = "location_name='" + localStorage[LOCATION] + "'";

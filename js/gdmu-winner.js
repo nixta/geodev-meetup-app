@@ -22,11 +22,6 @@ var _attendee_table = `${_attendeeBaseUrl}/1`;
     //
     // });
 
-    // Sign out of AGOL
-    document.getElementById("sign-out").addEventListener("click", function(e){
-        signOut();
-    });
-
     document.getElementById("save-location-btn").addEventListener("click", function(e){
         //var location = $("#meetup-location").val().trim();
         var location = $("#events-list option:selected").data("event-key");
@@ -97,13 +92,11 @@ function logIntoPortal(callback){
             function (result){
                 console.log("We are already logged in. Good to go!");
                 _token = result.token;
-                document.getElementById("sign-out").disabled = false;
                 document.getElementById("login-btn").disabled = true;
                 callback(true);
             }
         ).otherwise(
             function (){
-                document.getElementById("sign-out").disabled = true;
                 document.getElementById("login-btn").disabled = false;
                 console.warn("Log in required to get things going.");
                 callback(false);

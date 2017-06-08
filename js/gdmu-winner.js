@@ -3,7 +3,9 @@ var _APP_ID = "pgOw7HSXNSdsWZSp";   // AGOL app id
 var _token = null;
 var _oauth_info;
 var _names = "";
-var _feature_service = "https://services.arcgis.com/uCXeTVveQzP4IIcx/ArcGIS/rest/services/Geodevmeetuphl/FeatureServer/0";
+var _attendeeBaseUrl = "https://services.arcgis.com/uCXeTVveQzP4IIcx/arcgis/rest/services/GDMUEvents/FeatureServer";
+var _feature_service = `${_attendeeBaseUrl}/0`;
+var _attendee_table = `${_attendeeBaseUrl}/1`;
 
 // Let's initialize everything
 (function init(){
@@ -12,17 +14,13 @@ var _feature_service = "https://services.arcgis.com/uCXeTVveQzP4IIcx/ArcGIS/rest
     // Set appId value in modal form
     $('#myModal #app-id').val(_APP_ID);
 
-    // Sign into AGOL
-    document.getElementById("login-btn").addEventListener("click", function(e){
-        require(["esri/IdentityManager"], function(esriId){
-            esriId.getCredential(_oauth_info.portalUrl + "/sharing")
-                .then(function(result){
-                        console.log("hah");
-                    }
-                );
-        });
-
-    });
+    // // Sign into AGOL
+    // document.getElementById("login-btn").addEventListener("click", function(e){
+    //     require(["esri/IdentityManager"], function(esriId){
+    //         esriId.getCredential(_oauth_info.portalUrl + "/sharing");
+    //     });
+    //
+    // });
 
     // Sign out of AGOL
     document.getElementById("sign-out").addEventListener("click", function(e){
@@ -47,6 +45,16 @@ var _feature_service = "https://services.arcgis.com/uCXeTVveQzP4IIcx/ArcGIS/rest
 
     logIntoPortal(function(result){
         if(!result){
+
+            require(["esri/IdentityManager"], function(esriId){
+                esriId.getCredential(_oauth_info.portalUrl + "/sharing");
+            });
+
+        }
+        else {
+
+            getEventNames();
+
             $('#myModal').modal( 'show' );
         }
     });
@@ -104,7 +112,7 @@ function logIntoPortal(callback){
     });
 }
 
-function getNames2(){
+function getEventNames(){
     require(["esri/tasks/QueryTask", "esri/tasks/query"], function (QueryTask, Query) {
         var qt = new QueryTask(_feature_service);
         var q = new Query();

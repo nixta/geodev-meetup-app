@@ -12,7 +12,6 @@ var _attendee_table = `${_attendeeBaseUrl}/1`;
     $('#myModal').modal({ show: false});
 
     document.getElementById("save-location-btn").addEventListener("click", function(e){
-        //var location = $("#meetup-location").val().trim();
         var location = $("#events-list option:selected").data("event-key");
 
         if(location == ""){

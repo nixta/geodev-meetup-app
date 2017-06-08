@@ -438,9 +438,7 @@
             $('#namesbox').val("");
             $('#namesbox').val(nameupdated);
             $('#result1').html("Removed");
-            $('#result1').fadeOut(1000, function () {
-                $("div").remove("#result1");
-            });
+            $('#result1').fadeOut(1000);
             $("div").remove(".name");
             $("div").remove(".extra");
             $('#headline').text('You missed out! Let\'s see who is next?');

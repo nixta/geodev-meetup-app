@@ -8,7 +8,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width"/>
 	<link rel="icon" href="http://www.esri.com/favicon.ico">
-    <title>Random Name Picker</title>
+    <title>GeoDev Name Picker</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="https://js.arcgis.com/3.20/esri/css/esri.css">
@@ -83,24 +83,18 @@
 
 <body>
 
-<div class="full-head" style="width:100%;background:#e5e5e5 center top">
-    <div class="row">
-        <div class="large-12 columns" style="padding-top:50px;background:#e5e5e5 repeat-x center top;z-index:20;">
-            <ul class="button-group even-4">
-                <li>
-                    <button class="button" id="list" onclick="namelist();">Get Name List</button>
-                </li>
-                <li>
-                    <button class="button" id="save" onclick="save();">Save &amp; Update</button>
-                </li>
-                <li>
-                    <button class="success button" id="go" onclick="go();">Go</button>
-                </li>
-                <li>
-                    <button class="alert button" id="sign-out-2" onclick="signOut();" >Sign-out</button>
-                </li>
-            </ul>
-        </div>
+<div class="btn-group btn-group-justified" role="group">
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-default" id="list" onclick="namelist();">Get Name List</button>
+    </div>
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-default" id="save" onclick="save();">Save &amp; Update</button>
+    </div>
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-success" id="go" onclick="go();">Go</button>
+    </div>
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-danger" id="sign-out-2" onclick="signOut();" >Sign-out</button>
     </div>
 </div>
 

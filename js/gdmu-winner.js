@@ -108,9 +108,17 @@ function getEventNames(){
                     eventDate = new Date(event.attributes["Date"]),
                     eventDateString = eventDate.toISOString().split("T")[0],
                     eventId = `${eventName} ${eventDateString}`;
-                $("#events-list").append(
-                    `<option value="${eventGuid}" data-event-key="${eventId}" data-event-name="${eventName}">${eventId}</option>`
-                )
+
+                if(eventId == localStorage[LOCATION]){
+                    $("#events-list").append(
+                        `<option selected value="${eventGuid}" data-event-key="${eventId}" data-event-name="${eventName}">${eventId}</option>`
+                    )
+                }
+                else {
+                    $("#events-list").append(
+                        `<option value="${eventGuid}" data-event-key="${eventId}" data-event-name="${eventName}">${eventId}</option>`
+                    )
+                }
             }
 
             // // Initialize chosen

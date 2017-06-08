@@ -121,7 +121,7 @@
 </div>
 
 
-<!-- Modal Panel -->
+<!-- Configuration Modal -->
 <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">
 
@@ -133,7 +133,11 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label>Meetup Location:</label>
+                    <div class="form-group">
+                        <label>Event:</label>
+                        <select id="events-list" data-placeholder="Choose an event..." style="width:350px;" class="chosen-select">
+                        </select>
+                    </div>
                     <div class="input-group">
                         <input type="text" class="form-control" id="meetup-location">
                         <span class="input-group-btn">

@@ -11,17 +11,6 @@ var _attendee_table = `${_attendeeBaseUrl}/1`;
 (function init(){
     $('#myModal').modal({ show: false});
 
-    // Set appId value in modal form
-    $('#myModal #app-id').val(_APP_ID);
-
-    // // Sign into AGOL
-    // document.getElementById("login-btn").addEventListener("click", function(e){
-    //     require(["esri/IdentityManager"], function(esriId){
-    //         esriId.getCredential(_oauth_info.portalUrl + "/sharing");
-    //     });
-    //
-    // });
-
     document.getElementById("save-location-btn").addEventListener("click", function(e){
         //var location = $("#meetup-location").val().trim();
         var location = $("#events-list option:selected").data("event-key");
@@ -92,12 +81,10 @@ function logIntoPortal(callback){
             function (result){
                 console.log("We are already logged in. Good to go!");
                 _token = result.token;
-                document.getElementById("login-btn").disabled = true;
                 callback(true);
             }
         ).otherwise(
             function (){
-                document.getElementById("login-btn").disabled = false;
                 console.warn("Log in required to get things going.");
                 callback(false);
             }

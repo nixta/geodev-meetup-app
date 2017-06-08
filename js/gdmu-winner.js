@@ -13,7 +13,7 @@ var _feature_service = "https://services.arcgis.com/uCXeTVveQzP4IIcx/ArcGIS/rest
     $('#myModal #app-id').val(_APP_ID);
 
     // Sign into AGOL
-    document.getElementById("sign-in").addEventListener("click", function(e){
+    document.getElementById("login-btn").addEventListener("click", function(e){
         require(["esri/IdentityManager"], function(esriId){
             esriId.getCredential(_oauth_info.portalUrl + "/sharing")
                 .then(function(result){
@@ -89,13 +89,13 @@ function logIntoPortal(callback){
                 console.log("We are already logged in. Good to go!");
                 _token = result.token;
                 document.getElementById("sign-out").disabled = false;
-                document.getElementById("sign-in").disabled = true;
+                document.getElementById("login-btn").disabled = true;
                 callback(true);
             }
         ).otherwise(
             function (){
                 document.getElementById("sign-out").disabled = true;
-                document.getElementById("sign-in").disabled = false;
+                document.getElementById("login-btn").disabled = false;
                 console.warn("Log in required to get things going.");
                 callback(false);
             }

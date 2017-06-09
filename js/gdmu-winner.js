@@ -211,7 +211,7 @@ function go() {
     $('#namesbox').slideDown();
 
     var count = 1;
-    count = 1;
+
     $("div").remove("#result1");
 
     /////////////////////////////
@@ -230,7 +230,7 @@ function go() {
     $("div").remove(".name");
     $("div").remove(".extra");
     $("#playback").html("");
-    newtop = _names.length * 200 * -1;
+    var newtop = _names.length * 200 * -1;
     $('#values').css({top: +newtop});
 
     _names.sort(randOrd);

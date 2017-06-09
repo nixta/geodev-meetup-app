@@ -10,7 +10,7 @@
 	<link rel="icon" href="http://www.esri.com/favicon.ico">
     <title>GeoDev Name Picker</title>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/flatly/bootstrap.min.css" >
     <link rel="stylesheet" href="https://js.arcgis.com/3.20/esri/css/esri.css">
     <link rel="stylesheet" href="css/normalize.css"/>
     <script src="js/vendor/custom.modernizr.js"></script>
@@ -86,6 +86,7 @@
             text-align: center;
             bottom: 20px;
             width: 100%;
+            color: gray;
         }
     </style>
 
@@ -95,13 +96,13 @@
 
 <div id="top-btn-group" class="btn-group btn-group-justified" role="group">
     <div class="btn-group" role="group">
-        <button type="button" class="btn btn-primary btn-lg" id="list" onclick="namelist();">Get Name List</button>
+        <button type="button" class="btn btn-primary" id="list" onclick="namelist();">Get Names</button>
     </div>
     <div class="btn-group" role="group">
-        <button type="button" class="btn btn-success btn-lg" id="go" onclick="go();">Go</button>
+        <button type="button" class="btn btn-success" id="go" onclick="go();">Go</button>
     </div>
     <div class="btn-group" role="group">
-        <button type="button" class="btn btn-danger btn-lg" id="sign-out-2" onclick="signOut();" >Sign-out</button>
+        <button type="button" class="btn btn-danger" id="sign-out-2" onclick="signOut();" >Sign-out</button>
     </div>
 </div>
 
@@ -115,9 +116,9 @@
     <div id="varnote" class="col-md-12"><img src="img/logo.jpg" height="364" width="292"></div>
 </div>
 
-<div class="row">
-    <div id="values" class="col-md-12"></div>
-</div>
+
+<div id="values" class="col-md-12"></div>
+
 
 <!-- Configuration Modal -->
 <div class="modal fade" id="myModal" role="dialog">

@@ -23,6 +23,11 @@ var _attendee_table = `${_attendeeBaseUrl}/1`;
         }
     });
 
+    // Open configuration window
+    document.getElementById("config").addEventListener("click", function showConfig() {
+        $('#myModal').modal('show');
+    });
+
     if(localStorage[LOCATION]){
         $('#myModal #meetup-location').val(localStorage[LOCATION]);
     }

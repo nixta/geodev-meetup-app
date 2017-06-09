@@ -138,6 +138,8 @@ function getEventNames(){
 
 function getNames(){
 
+    $("#config").show();
+
     var whereClause = "EventKey='" + localStorage[LOCATION] + "'";
 
     var params = "f=json&token=" + _token + "&where=" + whereClause + "&outFields=FirstName,LastName" + "&returnGeometry=false";
@@ -203,6 +205,7 @@ function namelist() {
 
 // does the actual animation
 function go() {
+    $("#config").hide();
     $("#varnote").hide();
     $('body').css({"overflow-y": "hidden"});
     $('#go').attr('disabled', 'disabled');

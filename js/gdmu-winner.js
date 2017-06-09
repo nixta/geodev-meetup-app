@@ -188,26 +188,13 @@ function randOrd() {
     return (Math.round(Math.random()) - 0.5);
 }
 
-function save() {
-    $("#varnote").hide();
-    $("#popdown").show();
-    $("#values").hide();
-    $("div").remove("#result1");
-    savenames = $("#namesbox").val();
-    savenames = savenames.replace(/\n\r?/g, '101');
-    $('#headline').fadeOut();
-    $('#headline').text('The name list is saved and updated.').fadeIn();
-    $("#names").show();
-    $('#namesbox').attr('disabled', 'disabled');
-}
-
 function namelist() {
 
     getNames();
 
     $("#varnote").hide();
     $('#namesbox').removeAttr('disabled', 'disabled');
-    $('#headline').text('Configure name list for ' + localStorage[LOCATION]);
+    $('#headline').text('Attendee Name list for ' + localStorage[LOCATION]);
     $("#popdown").show();
     $("#values").hide();
     $("#names").show();
@@ -220,7 +207,6 @@ function go() {
     $('body').css({"overflow-y": "hidden"});
     $('#go').attr('disabled', 'disabled');
     $('#list').attr('disabled', 'disabled');
-    $('#save').attr('disabled', 'disabled');
     $('#headline').slideUp();
     $('#namesbox').slideDown();
 
@@ -275,7 +261,6 @@ function standout(text) {
     $('#result1').append("<div class='extra'><button type='button' class='btn btn-danger' onclick='removeName()'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span>  Remove name from list</button></div>");
     $('#go').removeAttr('disabled', 'disabled');
     $('#list').removeAttr('disabled', 'disabled');
-    $('#save').removeAttr('disabled', 'disabled');
     $('#headline').text('DevSummit 2018 Winner!');
     $('#headline').slideDown();
 }

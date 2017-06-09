@@ -196,7 +196,7 @@ function namelist() {
 
     $("#varnote").hide();
     $('#namesbox').removeAttr('disabled', 'disabled');
-    $('#headline').text('Attendee Name list for ' + localStorage[LOCATION]);
+    $('#headline').text('Attendees for ' + localStorage[LOCATION]);
     $("#popdown").show();
     $("#values").hide();
     $("#names").show();

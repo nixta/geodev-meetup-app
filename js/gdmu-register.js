@@ -1,6 +1,10 @@
-var LOCATION = "eventKey"; // meetup key
-var LOCATIONGUID = "eventGuid"; // meetup GUID
-var LOCATIONNAME = "eventName"; // meetup Name
+var EVENTKEY = "eventKey"; // meetup key
+var EVENTGUID = "eventGuid"; // meetup GUID
+var EVENTNAME = "eventName"; // meetup Name
+var EVENTTYPE = "eventType"; // Meetup or Hackerlab
+var showBenefitTypes = [0];
+var _typeMappingText = ["Meetup", "Hackerlab"];
+var _typeMappingTag = ["GDMU", "HL"];
 var _APP_ID = "pgOw7HSXNSdsWZSp"; // AGOL app id
 var _message = ""; // Alert message
 var _oauth_info;
@@ -9,24 +13,20 @@ var _attendeeBaseUrl = "https://services.arcgis.com/uCXeTVveQzP4IIcx/arcgis/rest
 var _feature_service = `${_attendeeBaseUrl}/0`;
 var _attendee_table = `${_attendeeBaseUrl}/1`;
 
-$(".chosen-select").chosen({
-    width: "100%"
-});
-
 $('#myModal').modal({
     show: false
 });
+
 $('#alertModal').modal({
     show: false
 });
+
 $('#successModal').modal({
     show: false
 });
 
 document.getElementById("config").addEventListener("click", function showConfig() {
-    reflectStoredEvent();
-
-    $('#myModal #app-id').val(_APP_ID);
+    updateConfigPanel();
 
     $('#myModal').modal('show');
 });
@@ -36,30 +36,6 @@ document.getElementById("save-config").addEventListener("click", function saveCo
     reflectStoredEvent();
 });
 
-function updateStoredEvent() {
-    var eventGuid = $("#events-list").chosen().val(),
-        eventKey = $("#events-list option:selected").data("event-key"),
-        eventName = $("#events-list option:selected").data("event-name");
-
-    localStorage[LOCATION] = eventKey;
-    localStorage[LOCATIONGUID] = eventGuid;
-    localStorage[LOCATIONNAME] = eventName;
-
-    console.log(`Set local storage event to ${localStorage[LOCATION]}`);
-}
-
-function reflectStoredEvent() {
-    var eventGuid = localStorage[LOCATIONGUID];
-    var eventName = localStorage[LOCATIONNAME];
-
-    $("#events-list").val(eventGuid);
-    $("#events-list").trigger("chosen:updated");
-
-    if (eventName !== undefined) {
-        $("#event-title").text(`the ${eventName}`);
-    }
-}
-
 document.getElementById("login-btn").addEventListener("click", function (e) {
     require(["esri/IdentityManager"], function (esriId) {
         esriId.getCredential(_oauth_info.portalUrl + "/sharing")
@@ -67,7 +43,6 @@ document.getElementById("login-btn").addEventListener("click", function (e) {
                 console.log("hah");
             });
     });
-
 });
 
 document.getElementById("sign-out").addEventListener("click", function (e) {
@@ -76,7 +51,6 @@ document.getElementById("sign-out").addEventListener("click", function (e) {
         esriId.destroyCredentials();
         window.location.reload();
     });
-
 });
 
 $('#alertModal').on('show.bs.modal', function (evt) {
@@ -92,7 +66,7 @@ require(["dojo/Deferred"], function (Deferred) {
                 var qt = new QueryTask(_feature_service);
                 var q = new Query();
                 q.where = "1=1";
-                q.outFields = ["Name", "Date", "EventKey", "GlobalID"];
+                q.outFields = ["Name", "Date", "Type", "EventKey", "GlobalID"];
                 q.orderByFields = ["Date DESC"];
 
                 qt.execute(q, function (results) {
@@ -100,11 +74,20 @@ require(["dojo/Deferred"], function (Deferred) {
                         var event = results.features[i],
                             eventGuid = event.attributes["GlobalID"],
                             eventName = event.attributes["Name"],
+                            eventType = event.attributes["Type"],
                             eventDate = new Date(event.attributes["Date"]),
-                            eventDateString = eventDate.toISOString().split("T")[0],
-                            eventId = `${eventName} ${eventDateString}`;
+                            eventDateString = eventDate.toISOString().split("T")[0];
+
+                        // This is naughty and lazy. Really we should load the layer, read the 
+                        // CodedValueDomain from the field, and look up the name for the codes.
+                        var eventTypeTag = _typeMappingTag[eventType],
+                            eventTypeText = _typeMappingText[eventType];
+
+                        var eventKey = `${eventName} ${eventDateString} ${eventTypeTag}`,
+                            eventTitle = `${eventDateString} ${eventName} [${eventTypeText}]`;
+
                         $("#events-list").append(
-                            `<option value="${eventGuid}" data-event-key="${eventId}" data-event-name="${eventName}">${eventId}</option>`
+                            `<option value="${eventGuid}" data-event-key="${eventKey}" data-event-type="${eventType}" data-event-name="${eventName}">${eventTitle}</option>`
                         )
                     }
 
@@ -173,13 +156,6 @@ require(["dojo/Deferred"], function (Deferred) {
     function submitUpdate(firstName, lastName, title, organization, email, firstTimer) {
 
         var newEntry = {
-            // 'geometry':{
-            //     'x': parseFloat(localStorage[LON]),
-            //     'y': parseFloat(localStorage[LAT]),
-            //     'spatialReference': {
-            //         'wkid':4326
-            //     }
-            // },
             'attributes': {
                 'FirstName': firstName,
                 'LastName': lastName,
@@ -187,8 +163,8 @@ require(["dojo/Deferred"], function (Deferred) {
                 'Organization': organization,
                 'Email': email,
                 'FirstTimer': firstTimer,
-                'EventID': localStorage[LOCATIONGUID],
-                'EventKey': localStorage[LOCATION]
+                'EventID': localStorage[EVENTGUID],
+                'EventKey': localStorage[EVENTKEY]
             }
         };
 
@@ -200,7 +176,6 @@ require(["dojo/Deferred"], function (Deferred) {
         req.onload = function () {
             if (req.status === 200 && req.responseText !== "") {
                 try {
-                    // var b = this.responseText.replace(/"/g, "'"); // jshint ignore:line
                     var obj = JSON.parse(this.responseText);
 
                     if (obj.hasOwnProperty('addResults') && obj.addResults[0].success === true) {
@@ -209,7 +184,7 @@ require(["dojo/Deferred"], function (Deferred) {
                         $("#title").val('');
                         $("#organization").val('');
                         $("#email").val('');
-                        //alert("Thanks, your entry was successfully submitted!");
+
                         $('#successModal').modal('show');
                         window.setTimeout(function hideSuccess() {
                             $('#successModal').modal('hide');
@@ -277,3 +252,43 @@ require(["dojo/Deferred"], function (Deferred) {
     }
 
 });
+
+function updateStoredEvent() {
+    var eventGuid = $("#events-list").chosen().val(),
+        eventKey = $("#events-list option:selected").data("event-key"),
+        eventName = $("#events-list option:selected").data("event-name"),
+        eventType = $("#events-list option:selected").data("event-type");
+
+    localStorage[EVENTKEY] = eventKey;
+    localStorage[EVENTGUID] = eventGuid;
+    localStorage[EVENTNAME] = eventName;
+    localStorage[EVENTTYPE] = eventType;
+
+    console.log(`Set local storage event to ${localStorage[EVENTKEY]}`);
+}
+
+function updateConfigPanel() {
+    var eventGuid = localStorage[EVENTGUID];
+  
+    $("#events-list").val(eventGuid);
+    $("#events-list").trigger("chosen:updated");
+
+    $('#myModal #app-id').val(_APP_ID);
+}
+
+function reflectStoredEvent() {
+    var eventGuid = localStorage[EVENTGUID];
+    var eventName = localStorage[EVENTNAME];
+    var eventType = localStorage[EVENTTYPE],
+        eventTypeText = _typeMappingText[eventType];
+
+    if (eventName !== undefined) {
+        $("#event-title").text(`the ${eventName} GeoDev ${eventTypeText}`);
+    }
+
+    if (showBenefitTypes.indexOf(parseInt(eventType)) > -1) {
+        $("#signin-benefit").show()
+    } else {
+        $("#signin-benefit").hide()
+    }
+}

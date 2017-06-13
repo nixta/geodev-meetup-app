@@ -2,7 +2,7 @@ var EVENTKEY = "eventKey"; // meetup key
 var EVENTGUID = "eventGuid"; // meetup GUID
 var EVENTNAME = "eventName"; // meetup Name
 var EVENTTYPE = "eventType"; // Meetup or Hackerlab
-var showBenefitTypes = [0];
+var _showBenefitTypes = [0];
 var _typeMappingText = ["Meetup", "Hackerlab"];
 var _typeMappingTag = ["GDMU", "HL"];
 var _APP_ID = "pgOw7HSXNSdsWZSp"; // AGOL app id
@@ -286,7 +286,7 @@ function reflectStoredEvent() {
         $("#event-title").text(`the ${eventName} GeoDev ${eventTypeText}`);
     }
 
-    if (showBenefitTypes.indexOf(parseInt(eventType)) > -1) {
+    if (_showBenefitTypes.indexOf(parseInt(eventType)) > -1) {
         $("#signin-benefit").show()
     } else {
         $("#signin-benefit").hide()

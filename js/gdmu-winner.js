@@ -234,7 +234,7 @@ function go() {
     $("div").remove(".extra");
     $("#playback").html("");
     var newtop = _names.length * 200 * -1;
-    $('#values').css({top: +newtop});
+    $('#values').css({bottom: +newtop});
 
     _names.sort(randOrd);
     for (var i in _names) {
@@ -249,10 +249,10 @@ function go() {
     }
 
     text = $('#result1').text()
-    $('#values').animate({top: '+176'}, 5000);
+    $('#values').animate({top: '+176'}, 0);
 
     // make it stand out
-    setTimeout("standout(text)", 5000);
+    setTimeout("standout(text)", 500);
     //setTimeout("$('#playback').hide('slow')",11005);
 }
 

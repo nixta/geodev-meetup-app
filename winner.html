@@ -99,31 +99,43 @@
 
 <body>
 
-<div id="top-btn-group" class="btn-group btn-group-justified" role="group">
-    <div class="btn-group" role="group">
-        <button type="button" class="btn btn-primary" id="list" onclick="namelist();">Get Names</button>
-    </div>
-    <div class="btn-group" role="group">
-        <button type="button" class="btn btn-success" id="go" onclick="go();">Go</button>
-    </div>
-    <div class="btn-group" role="group">
-        <button type="button" class="btn btn-danger" id="sign-out-2" onclick="signOut();" >Sign-out</button>
-    </div>
-</div>
+<div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12" >
+                <div id="top-btn-group" class="btn-group btn-group-justified" role="group">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-primary" id="list" onclick="namelist();">Get Names</button>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-success" id="go" onclick="go();">Go</button>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-danger" id="sign-out-2" onclick="signOut();" >Sign-out</button>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                        <h3 style="text-align:center;margin-top:30px;" id="headline">Let's see who is coming to DevSummit 2018?</h3>
+                </div>       
+            </div>
+        <div id="popdown">
+            <div id="names" class="inbox"><textarea name="namesbox" id="namesbox" class="center-block"></textarea></div>
+        </div>
 
-<h3 style="text-align:center;margin-top:30px;" id="headline">Let's see who is coming to DevSummit 2018?</h3>
 
-<div id="popdown">
-    <div id="names" class="inbox"><textarea name="namesbox" id="namesbox" class="center-block"></textarea></div>
-</div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div id="varnote"><img src="img/logo.png" height="350" width="350"></div>
+            </div>
+        </div>
 
-<div class="row">
-    <div id="varnote" class="col-md-12"><img src="img/logo.jpg" height="364" width="292"></div>
-</div>
-
-
-<div id="values" class="col-md-12"></div>
-
+        <div class="row">
+            <div class="col-xs-12">
+                <div id="values"></div>
+            </div>
+        </div>
 
 <!-- Configuration Modal -->
 <div class="modal fade" id="myModal" role="dialog">
